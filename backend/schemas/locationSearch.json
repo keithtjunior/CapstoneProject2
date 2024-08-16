@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "swlat": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "swlng": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "nelat": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "nelng": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    }
+  },
+  "required": [
+    "name",
+    "swlat",
+    "swlng",
+    "nelat",
+    "nelng"
+  ]
+}

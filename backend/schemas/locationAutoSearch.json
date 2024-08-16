@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "properties": {
+    "term": {
+      "type": "string",
+      "maxLength": 120
+  }
+  },
+  "required": ["term"]
+}
