@@ -4,8 +4,7 @@ FaunaFinder is a full-stack web application designed to help users find fauna ar
 
 ## Installation
 
-npm intall
-npm run dev 
+npm intall && run dev 
 
 ## License
 
