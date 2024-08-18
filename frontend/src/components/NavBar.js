@@ -10,6 +10,7 @@ const NavBar = ({ getFaunae, setSearchItem }) => {
     const inputRef = useRef();
 
     const handleChange = (val) => {
+        console.log(process.env.PUBLIC_URL)
         setInput(val);
     };
 
@@ -41,7 +42,7 @@ const NavBar = ({ getFaunae, setSearchItem }) => {
                     <Navbar className='navbar-light bg-light navbar-expand-xl'>
                         <NavLink exact to='/' className='navbar-brand ms-3'>
                             <div className='navbar-links'>
-                                <img src='./img/logo.png' className='navbar-logo' alt='FaunaFinder Logo' />
+                                <img src={process.env.PUBLIC_URL + '/img/logo.png'} className='navbar-logo' alt='FaunaFinder Logo' />
                                 <h1 className='text-primary display-5 navbar-title'>FaunaFinder</h1>
                             </div>
                         </NavLink>

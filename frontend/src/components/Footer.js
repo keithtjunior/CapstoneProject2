@@ -9,7 +9,7 @@ const Footer = () => {
                         <span className='text-body'><i className='fas fa-copyright text-light me-2'></i>FaunaFinder</span>
                     </Col>
                     <Col className='col-md-4 d-flex justify-content-end'>
-                        <img src='./img/logo.png' className='footer-logo' alt='FaunaFinder Logo' />
+                        <img src={process.env.PUBLIC_URL + '/img/logo.png'} className='footer-logo' alt='FaunaFinder Logo' />
                     </Col>
                 </Row>
             </Container>
