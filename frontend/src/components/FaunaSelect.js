@@ -13,12 +13,12 @@ const FaunaSelect = ({ fauna, taxa, getFaunaeByPlace }) => {
         e.stopPropagation();
         e.preventDefault();
         if(/^\d+$/.test(selectRef.current.value)){
-            let place = fauna.listedTaxa.find(c => c.id == selectRef.current.value);
+            let place = fauna.taxaListings.find(c => c.id == selectRef.current.value);
             if(place){
                 let data = {
                     lat: place.lat,
                     lng: place.lng,
-                    place_ids: place.ancestor_place_ids,
+                    place_ids: place.ancestor_place_ids || [],
                     per_page: undefined,
                     radius: undefined
                 }
@@ -33,6 +33,7 @@ const FaunaSelect = ({ fauna, taxa, getFaunaeByPlace }) => {
             <span>Error: Locations unavailable...</span>
         </div>
     );
+    else
     return (
         <div className='input-group d-flex justify-content-center' style={{ minWidth: '120px', marginBottom: '1.5rem'}}>
             <select 
@@ -47,7 +48,7 @@ const FaunaSelect = ({ fauna, taxa, getFaunaeByPlace }) => {
                 <option value={null}>Choose a location...</option>
                 {taxa && taxa.map((taxon, idx) => (
                     <option key={idx} value={taxon.id}>
-                        {taxon.display_name}
+                        {taxon.displayName}
                     </option>
                 ))}
             </select>

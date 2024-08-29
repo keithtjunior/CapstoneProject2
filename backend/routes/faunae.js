@@ -45,7 +45,8 @@ router.get('/:id(\\d+)', async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    const results = await Fauna.get(params.id);
+    // const results = await Fauna.get(params.id);
+    const results = await Fauna.getFauna(params.id);
     return res.json({ results });
   } catch (err) {
     return next(err);
@@ -84,7 +85,7 @@ router.get('/continent', async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    const results = await Fauna.getByContinent(arr);
+    const results = await Fauna.findByContinent(arr);
     return res.json({ results });
   } catch (err) {
     return next(err);
@@ -101,7 +102,7 @@ router.get('/place', async function (req, res, next) {
       let query = {
         'lat': Number(q.lat),
         'lng': Number(q.lng),
-        'place_ids': Array.isArray(q.place_ids) ? q.place_ids : q.place_ids.slice(1,-1).split(','),
+        'place_ids': q.place_ids ? (Array.isArray(q.place_ids) ? q.place_ids : q.place_ids.slice(1,-1).split(',')) : [],
         'per_page': q.per_page,
         'radius': q.radius
       }

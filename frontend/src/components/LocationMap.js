@@ -16,7 +16,7 @@ const LocationMap = ({ location }) => {
             const view = new MapView({
                 container: mapDiv.current, 
                 map: webmap, 
-                center: [location.location.lng, location.location.lat],
+                center: [location.lng, location.lat],
                 zoom: 7,
                 constraints: {
                     snapToZoom: false

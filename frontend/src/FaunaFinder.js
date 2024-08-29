@@ -35,7 +35,11 @@ const FaunaFinder = ({ initialFauna, initialLocation, taxonNames }) => {
             setIsLoading(true);
             const newTaxa = taxonNames.reduce((acc, name) => {
                 return { ...acc, [name[0]]: faunae
-                    .filter(item => item.taxonName == name[0])}
+                    .filter(
+                        item => item.taxonName == name[0] || 
+                        item.commonName == name[0] ||
+                        item.ancestorIds.includes(name[2])
+                    )}
             }, {});
             setTaxa(newTaxa);
             setIsLoading(false);
@@ -290,10 +294,13 @@ FaunaFinder.defaultProps = {
         commonName: '',
         matchedTerm: '',
         taxonName: '',
-        parent_id: null,
+        parentId: null,
         summary: '',
         wikiUrl: '',
-        locations: []
+        locations: [],
+        taxaListings: [],
+        observations: [],
+        photos: [],
     },
     initialLocation: {
         id: null,
@@ -307,15 +314,21 @@ FaunaFinder.defaultProps = {
         nelng: null
     },
     taxonNames: [
-        ['Actinopterygii', 'Fish'],
-        ['Amphibia', 'Amphibians'],
-        ['Animalia', 'Animals'],
-        ['Arachnida', 'Arachnids'],
-        ['Aves', 'Birds'],
-        ['Insecta', 'Insects'],
-        ['Mammalia', 'Mammals'],
-        ['Mollusca', 'Mollusks'],
-        ['Reptilia', 'Reptiles']
+        ['Animalia', 'Animals', 1],
+        ['Aves', 'Birds', 3],
+        ['Amphibia', 'Amphibians', 20978],
+        ['Reptilia', 'Reptiles', 26036],
+        ['Mammalia', 'Mammals', 40151],
+        ['Mollusca', 'Mollusks', 47115],
+        ['Arachnida', 'Arachnids', 47119],
+        ['Arthropoda', 'Arthropods', 47120],
+        ['Insecta', 'Insects', 47158],
+        ['Elasmobranchii', 'Cartilaginous Fish', 47273],
+        ['Actinopterygii', 'Ray-finned Fish', 47178],
+        ['Chimaeras', 'Cartilaginous Fish', 60450],
+        ['Sarcopterygii', 'Lobe-finned Fish', 85497],
+        ['Agnatha', 'Jawless Fish', 797045],
+        ['Vertebrata', 'Vertebrates', 355675]
     ]
 }
 

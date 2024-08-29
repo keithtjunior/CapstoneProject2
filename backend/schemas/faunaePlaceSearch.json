@@ -31,8 +31,7 @@
   },
   "required": [
     "lat",
-    "lng",
-    "place_ids"
+    "lng"
   ]
 }
 

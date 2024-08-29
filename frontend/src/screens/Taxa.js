@@ -14,18 +14,11 @@ import TaxaCard from '../components/TaxaCard';
 import ResultsList from '../components/ResultsList';
 import NoResultsCard from '../components/NoResultsCard';
 import Footer from '../components/Footer';
-import { useEffect } from 'react';
 
 
 const Taxa = ({ taxa, faunae, taxonNames, setTaxon }) => {
     const [isOpen, setIsOpen] = useToggle(false);
-
     const toggle = () => setIsOpen();
-
-    useEffect(() => {
-        console.log(faunae)
-        console.log(taxa)
-    }, [])
 
     if(Object.values(taxa).every(item => !item.length)) 
     return (

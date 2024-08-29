@@ -44,24 +44,6 @@ const Fauna = ({ fauna, getFauna, getFaunae, getFaunaeByPlace, setSearchItem }) 
 
     const toggleModal = () => setModal();
 
-    const handleClick = async (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        if(/^\d+$/.test(selectRef.current.value)){
-            let place = fauna.listedTaxa.find(c => c.id == selectRef.current.value);
-            if(place){
-                let data = {
-                    lat: place.lat,
-                    lng: place.lng,
-                    place_ids: place.ancestor_place_ids,
-                    per_page: undefined,
-                    radius: undefined
-                }
-                await getFaunaeByPlace(data);
-            }
-        }
-    }
-
     if (isLoading) 
     return (
         <Loading />
@@ -88,7 +70,7 @@ const Fauna = ({ fauna, getFauna, getFaunae, getFaunaeByPlace, setSearchItem }) 
                                 <div className='mb-2 text-center'>Listed Taxa Locations / Conservations / Captive:</div>
                                 <FaunaSelect 
                                     fauna={fauna}
-                                    taxa={fauna.listedTaxa}
+                                    taxa={fauna.taxaListings}
                                     getFaunaeByPlace={getFaunaeByPlace} />
                             </Col>
                             <Col>

@@ -5,10 +5,10 @@ const AboutUs = ({ imgNum }) => {
     return (
         <Container fluid className='about py-5'>
             <Container className='py-5'>
-                <Row className='g-5'>
+                <Row className='g-5 about-container'>
                     <Col className='col-xl-5'>
                         <div className='h-100'>
-                            <img src={`img/about-${imgNum}.jpg`} className='img-fluid w-100 h-100' alt='About Image' />
+                            <img src={`img/about-${imgNum}.jpg`} className='img-fluid w-100' alt='About Image' />
                         </div>
                     </Col>
                     <Col className='col-xl-7'>

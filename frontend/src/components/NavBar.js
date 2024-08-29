@@ -10,7 +10,6 @@ const NavBar = ({ getFaunae, setSearchItem }) => {
     const inputRef = useRef();
 
     const handleChange = (val) => {
-        console.log(process.env.PUBLIC_URL)
         setInput(val);
     };
 

@@ -10,9 +10,9 @@ const LocationsList = ({ locations, setSearchItem, getFaunaeByPlace }) => {
         e.stopPropagation();
         e.preventDefault();
         let data = {
-            lat: location.location.lat,
-            lng: location.location.lng,
-            place_ids: location.ancestorPlaceIds,
+            lat: location.lat,
+            lng: location.lng,
+            place_ids: location.ancestorPlaceIds || [],
             per_page: undefined,
             radius: undefined
         }

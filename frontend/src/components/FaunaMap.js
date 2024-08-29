@@ -105,7 +105,7 @@ const FaunaMap = ({ locations, observations, getFaunaeByPlace, defaultOptions })
                             attributes: {
                               ObjectID: item.id,
                               Name: item.name,
-                              DisplayName: item.display_name,
+                              DisplayName: item.displayName,
                               Type: type,
                               View: 'View All Fauna',
                               Lat: item.lat,
