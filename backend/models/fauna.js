@@ -48,24 +48,32 @@ class Fauna {
     });
 
     static async get(id) {
-        let url = this.buildUrl('taxa', id);
-        const res = await axios.get(url);
-        return res.data.results[0];
+        const res = await axios.get(`${INAT_API_URL}/taxa/${id}`);
+        return res.data ? res.data.results[0] : undefined;
     }
 
     static async getFauna(id) {
-        return await this.get(id)
+        let data = await this.get(id)
         .then(res => res)
         .then(async data => {
-            let places = await this.createFaunaPlaceArrays(data);
-            return {fauna: this.createFaunae([data])[0], places};
+            if(data){
+                let places = await this.createFaunaPlaceArrays(data);
+                return {fauna: this.createFaunae([data])[0], places};
+            }else{
+                return {fauna: undefined, places: undefined};
+            }
         })
         .then(({fauna, places}) => {
-            fauna['locations'] = places.locations;
-            fauna['taxaListings'] = places.taxaListings;
-            fauna['observations'] = places.observations;
-            return fauna;
+            if(fauna){
+                fauna['locations'] = places.locations;
+                fauna['taxaListings'] = places.taxaListings;
+                fauna['observations'] = places.observations;
+                return fauna;
+            }else{
+                return;
+            }
         });
+        return data;
     }
 
     static async findAll(species) {
@@ -126,19 +134,21 @@ class Fauna {
 
     static async getObservations(id) {
         let url = this.buildUrl('observations', '', {taxon_id: id});
-        return await axios.get(url);
+        let data = await axios.get(url);
+        return data;
     }
 
-    static listTaxaIdsWithCommas(obj){
+    static listTaxaIdsWithCommas(obj={}){
         return Object.values(obj).join(',');
     }
 
-    static buildUrl(subdirectory, path, parameters={}){
+    static buildUrl(subdirectory='', path='', parameters={}){
+        if(!subdirectory || typeof subdirectory !== 'string' || typeof path !== 'string') return `${INAT_API_URL}`;
         return `${INAT_API_URL}/${subdirectory}${path ? `/${path}` : ''}` + 
             `?verifiable=any&spam=false&order=desc${this.listParamatersInUrl(parameters)}`;
     }
 
-    static listParamatersInUrl(parameters){
+    static listParamatersInUrl(parameters={}){
         if(!Object.keys(parameters).length) return '';
         let arr = [];
         for (let [key, value] of Object.entries(parameters)) {
@@ -148,13 +158,14 @@ class Fauna {
     }
 
     static formatFaunaPhotos(data) {
-        if (!data[0].taxon_photos) return [];
+        if (!data || !Array.isArray(data) || !data[0].taxon_photos) return [];
         const photos = data.map(i => i.taxon_photos
             .map(t => {return {name: t.photo.attribution, url: t.photo.original_url}}));
         return photos[0];
     }
 
     static createTaxa(items){
+        if (!items || !Array.isArray(items)) return [];
         let data = [];
         for(let item of items){
             if(item.taxon) data.push(item.taxon)
@@ -163,10 +174,12 @@ class Fauna {
     }
 
     static getRandomItem(arr) {
+        if (!arr || !Array.isArray(arr) || !arr.length) return '';
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
     static createFaunae(items){
+        if (!items || !Array.isArray(items) || !items.length) return [];
         let data = [];
         for(let item of items){
             if(item.rank === 'species'){
@@ -195,70 +208,81 @@ class Fauna {
     }
 
     static async createFaunaPlaceArrays(item) {
+        if (!item) return {};
+
         const placeIds = [];
         let places = {};
         let locations = [];
         let taxaListings = []
 
-        // get place data for each fauna location (convservations_statuses)
-        // & add location id to place id array
-        if(item.conservation_statuses){
-            for(let place of item.conservation_statuses){
-                if(place.place && !placeIds.includes(place.place.id)){ 
-                    let res = await Location.getLocations(place.place.display_name);
-                    if(res){
-                        locations.push(res);
-                        placeIds.push(res.id);
-                    }
-                }
-            }
-        }
-        places['locations'] = locations;
-
-        // get place data for each fauna observation
-        let observations = await this.getObservations(item.id)
-        .then(async res => {
-            let observationArr = [];
-            if(res){
-                // build array of fauna observations names
-                let names = [];
-                let observationNames = [];
-                for(let item of res.data.results){
-                    if(item.place_guess){ 
-                        if(!names.includes(item.place_guess.split(',')[0].toLowerCase()) &&
-                        /^[a-zA-Z]+$/.test(item.place_guess.split(',')[0])){ 
-                            observationNames.push(item.place_guess.split(',')[0]);
-                            names.push(item.place_guess.split(',')[0].toLowerCase());
+        try {
+            // get place data for each fauna location (convservations_statuses)
+            // & add location id to place id array
+            if(item.conservation_statuses){
+                for(let place of item.conservation_statuses){
+                    if(place.place && !placeIds.includes(place.place.id)){ 
+                        let res = await Location.getLocations(place.place.display_name);
+                        if(res){
+                            locations.push(res);
+                            placeIds.push(res.id);
                         }
                     }
                 }
-                // get place data for each observation name with unique place id
-                // & add observation ids to place id array
-                for(let name of observationNames){
-                    let res = await Location.getLocations(name);
-                    if(res && !placeIds.includes(res.id)){ 
-                        observationArr.push(res)
-                        placeIds.push(res.id);
+            }
+            places['locations'] = locations;
+
+            // get place data for each fauna observation
+            let observations = await this.getObservations(item.id)
+            .then(async res => {
+                let observationArr = [];
+                if(res){
+                    // build array of fauna observations names
+                    let names = [];
+                    let observationNames = [];
+                    for(let item of res.data.results){
+                        if(item.place_guess){ 
+                            if(!names.includes(item.place_guess.split(',')[0].toLowerCase()) &&
+                            /^[a-zA-Z]+$/.test(item.place_guess.split(',')[0])){ 
+                                observationNames.push(item.place_guess.split(',')[0]);
+                                names.push(item.place_guess.split(',')[0].toLowerCase());
+                            }
+                        }
+                    }
+                    // get place data for each observation name with unique place id
+                    // & add observation ids to place id array
+                    for(let name of observationNames){
+                        let res = await Location.getLocations(name);
+                        if(res && !placeIds.includes(res.id)){ 
+                            observationArr.push(res)
+                            placeIds.push(res.id);
+                        }
+                    }
+                }
+                return observationArr;
+            });
+            places['observations'] = observations;
+
+            // get place data for each taxa listing (listed_taxa) with unique place id
+            if(item.listed_taxa){
+                for(let place of item.listed_taxa){
+                    if(place.place && !placeIds.includes(place.place.id)){ 
+                        let res = await Location.getLocations(place.place.display_name);
+                        if(res) taxaListings.push(res);
                     }
                 }
             }
-            return observationArr;
-        });
-        places['observations'] = observations;
+            places['taxaListings'] = taxaListings;
 
-        // get place data for each taxa listing (listed_taxa) with unique place id
-        if(item.listed_taxa){
-            for(let place of item.listed_taxa){
-                if(place.place && !placeIds.includes(place.place.id)){ 
-                    let res = await Location.getLocations(place.place.display_name);
-                    if(res) taxaListings.push(res);
-                }
+            return places;
+            
+        } catch (err) {
+            console.error(`${err.code}: ${err.message}`);
+            return {
+                locations: [],
+                observations: [],
+                taxaListings: []
             }
         }
-        places['taxaListings'] = taxaListings;
-
-        return places;
-        
     }
 
 }

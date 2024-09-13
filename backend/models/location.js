@@ -68,7 +68,7 @@ class Location {
 
     static async getLocations(name) {
         let url = this.buildUrl('places', 'autocomplete', {q: name, per_page: '1'});
-        return await axios.get(url)
+        let data = await axios.get(url)
         .then(result => {
             if(result && result.data.results.length){
                 let lat = null;
@@ -90,6 +90,7 @@ class Location {
                 return data;
             }
         });
+        return data;
     }
 
     static createLocation(items){
