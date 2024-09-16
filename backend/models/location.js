@@ -67,29 +67,27 @@ class Location {
     }
 
     static async getLocations(name) {
+        let data;
         let url = this.buildUrl('places', 'autocomplete', {q: name, per_page: '1'});
-        let data = await axios.get(url)
-        .then(result => {
-            if(result && result.data.results.length){
-                let lat = null;
-                let lng = null;
-                if(result.data.results[0].location){
-                    lat = Number(result.data.results[0].location.split(',')[0]);
-                    lng = Number(result.data.results[0].location.split(',')[1]);
-                }
-                let data = new Location(
-                    result.data.results[0].id,
-                    result.data.results[0].uuid || null,
-                    result.data.results[0].name,
-                    result.data.results[0].display_name,
-                    result.data.results[0].admin_level || null,
-                    result.data.results[0].ancestor_place_ids || [],
-                    lat,
-                    lng
-                )
-                return data;
+        let res = await axios.get(url)
+        if(res && res.data && res.data.results){
+            let lat = null;
+            let lng = null;
+            if(res.data.results[0].location){
+                lat = Number(res.data.results[0].location.split(',')[0]);
+                lng = Number(res.data.results[0].location.split(',')[1]);
             }
-        });
+            data = new Location(
+                res.data.results[0].id,
+                res.data.results[0].uuid || null,
+                res.data.results[0].name,
+                res.data.results[0].display_name,
+                res.data.results[0].admin_level || null,
+                res.data.results[0].ancestor_place_ids || [],
+                lat,
+                lng
+            )
+        }
         return data;
     }
 
