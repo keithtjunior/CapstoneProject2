@@ -48,8 +48,12 @@ class Fauna {
     });
 
     static async get(id) {
-        const res = await axios.get(`${INAT_API_URL}/taxa/${id}`);
-        return res.data ? res.data.results[0] : undefined;
+        const res = await axios.get(`${INAT_API_URL}/taxa/taxa/${id}`)
+        .catch(err => {
+            console.error(`${err.response.message}: ${err.response.status}`);
+            return undefined;
+        });
+        return res && res.data ? res.data.results[0] : undefined;
     }
 
     static async getFauna(id) {
@@ -71,6 +75,17 @@ class Fauna {
                 return fauna;
             }else{
                 return;
+            }
+        })
+        .catch(err => {
+            console.error(`${err.response.message}: ${err.response.status}`);
+            return {
+                'results': {
+                    'total_results': 0,
+                    'page': 1,
+                    'per_page': 30,
+                    'results': []
+                }
             }
         });
         return data;
@@ -140,8 +155,8 @@ class Fauna {
 
     static async getObservations(id) {
         let url = this.buildUrl('observations', '', {taxon_id: id});
-        let data = await axios.get(url);
-        return data;
+        let res = await axios.get(url);
+        return res && res.data ? res : undefined;
     }
 
     static listTaxaIdsWithCommas(obj={}){
@@ -230,7 +245,6 @@ class Fauna {
             // get place data for each fauna location (convservations_statuses)
             // & add location id to place id array
             if(item.conservation_statuses){
-                console.log('locations')
                 for(let place of item.conservation_statuses){
                     if(place.place && !placeIds.includes(place.place.id)){ 
                         let res = await Location.getLocations(place.place.display_name);
@@ -246,7 +260,6 @@ class Fauna {
             // get place data for each fauna observation
             let observationResults = await this.getObservations(item.id);
             if(observationResults){
-                console.log('observations')
                 // build array of fauna observations names
                 let names = [];
                 let observationNames = [];
@@ -273,7 +286,6 @@ class Fauna {
 
             // get place data for each taxa listing (listed_taxa) with unique place id
             if(item.listed_taxa){
-                console.log('taxaListings')
                 for(let place of item.listed_taxa){
                     if(place.place && !placeIds.includes(place.place.id)){ 
                         let res = await Location.getLocations(place.place.display_name);

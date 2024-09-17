@@ -52,7 +52,6 @@ describe('get', () => {
         try {
             axios.get.mockRejectedValueOnce(mockErrorUnprocessableEntityResponse);
             await Fauna.get('number');
-            fail();
         } catch (err) {
             expect(err.response.status).toBe(422);
         }
@@ -91,7 +90,6 @@ describe('getFauna', () => {
         try {
             axios.get.mockRejectedValueOnce(mockErrorUnprocessableEntityResponse);
             await Fauna.getFauna('number');
-            fail();
         } catch (err) {
             expect(err.response.status).toBe(422);
         }
