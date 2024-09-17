@@ -756,6 +756,9 @@ select:disabled {
   margin-left: .5rem;
   background-color: #1ab518;
 }
+.taxa-result-img {
+  max-height: 75px;
+}
 .show-all-toggle {
   margin-bottom: 2rem;
 } 

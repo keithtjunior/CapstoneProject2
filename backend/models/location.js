@@ -38,6 +38,7 @@ class Location {
     });
 
     static async findAll({lat, lng, swlat, swlng, nelat, nelng, radius=75, perPage=999999}) {
+        if(!this.isAllNumeric([lat, lng, swlat, swlng, nelat, nelng, radius, perPage])) return [];
         let taxonIds = Object.values(this.TaxologyIds).join(',');
         let url = this.buildUrl('observations', 'species_counts', {
             lat, lng, swlat, swlng, nelat, nelng, radius, per_page: perPage, 
@@ -49,6 +50,7 @@ class Location {
     }
 
     static async get({name, swlat, swlng, nelat, nelng}) {
+        if(!this.isAllNumeric([swlat, swlng, nelat, nelng])) return [];
         let url = this.buildUrl('places', 'nearby', {name, nelat, nelng, swlat, swlng});
         const res = await axios.get(url);
         return res.data ? this.createLocation(res.data.results.standard) : [];
@@ -129,6 +131,14 @@ class Location {
             arr.push(`&${key}=${value}`);
         }
         return arr.join('');
+    }
+
+    static isAllNumeric(arr) {
+        if(!Array.isArray(arr)) return false;
+        return arr.every(item => {
+            if(typeof item === 'string') return !isNaN(item);
+            else return typeof item === 'number';
+        });
     }
 
     // formatFaunaPhotos, createTaxa & createFaunae methods

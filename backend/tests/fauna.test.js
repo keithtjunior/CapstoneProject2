@@ -350,6 +350,9 @@ describe('isAllNumeric', () => {
     test('returns true if given array contains all numeric values', () => {
         expect(Fauna.isAllNumeric(arr)).toBeTruthy();
     });
+    test('returns true if given array contains all numeric string values', () => {
+        expect(Fauna.isAllNumeric(['1','2','3'])).toBeTruthy();
+    });
     test('returns false if given array contains non-numeric value', () => {
         expect(Fauna.isAllNumeric(['a', 'b', 'c'])).not.toBeTruthy();
     });

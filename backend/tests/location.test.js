@@ -55,8 +55,7 @@ describe('get', () => {
     test('works: missing parameters', async () => {
         axios.get.mockResolvedValueOnce(mockLocationNameResponse);
         const res = await Location.get({name: 'Australia'});
-        expect(Array.isArray(res)).toBeTruthy();
-        expect(res[0]).toBeInstanceOf(Location);
+        expect(res).toEqual([]);
     });
     test('works: invalid parameters', async () => {
         axios.get.mockResolvedValueOnce(mockNoLocationResponse);
@@ -139,7 +138,6 @@ describe('getByTerm', () => {
         expect(res).toEqual([]);
     });
 });
-
 
 /************************************** helper functions */
 
@@ -230,6 +228,22 @@ describe('listParamatersInUrl', () => {
     });
     test('returns empty string if given invalid parameter', () => {
         expect(Location.listParamatersInUrl(1)).toEqual('');
+    });
+});
+
+describe('isAllNumeric', () => {
+    const arr = [1,2,3];
+    test('returns true if given array contains all numeric values', () => {
+        expect(Location.isAllNumeric(arr)).toBeTruthy();
+    });
+    test('returns true if given array contains all numeric string values', () => {
+        expect(Location.isAllNumeric(['1','2','3'])).toBeTruthy();
+    });
+    test('returns false if given array contains non-numeric value', () => {
+        expect(Location.isAllNumeric(['a', 'b', 'c'])).not.toBeTruthy();
+    });
+    test('returns false with invalid parameter', () => {
+        expect(Location.isAllNumeric({})).not.toBeTruthy();
     });
 });
 

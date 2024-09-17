@@ -202,7 +202,10 @@ class Fauna {
 
     static isAllNumeric(arr) {
         if(!Array.isArray(arr)) return false;
-        return arr.every(item => typeof item === 'number');
+        return arr.every(item => {
+            if(typeof item === 'string') return !isNaN(item);
+            else return typeof item === 'number';
+        });
     }
 
     static createFaunae(items){
