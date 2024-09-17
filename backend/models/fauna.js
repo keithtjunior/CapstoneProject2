@@ -48,7 +48,7 @@ class Fauna {
     });
 
     static async get(id) {
-        const res = await axios.get(`${INAT_API_URL}/taxa/taxa/${id}`)
+        const res = await axios.get(`${INAT_API_URL}/taxa/${id}`)
         .catch(err => {
             console.error(`${err.response.message}: ${err.response.status}`);
             return undefined;
@@ -164,13 +164,14 @@ class Fauna {
     }
 
     static buildUrl(subdirectory='', path='', parameters={}){
-        if(!subdirectory || typeof subdirectory !== 'string' || typeof path !== 'string') return `${INAT_API_URL}`;
+        if(!subdirectory || typeof subdirectory !== 'string') return `${INAT_API_URL}`;
+        if(typeof path !== 'string' && typeof path !== 'number') return `${INAT_API_URL}`;
         return `${INAT_API_URL}/${subdirectory}${path ? `/${path}` : ''}` + 
-            `?verifiable=any&spam=false&order=desc${this.listParamatersInUrl(parameters)}`;
+        `?verifiable=any&spam=false&order=desc${this.listParamatersInUrl(parameters)}`;
     }
 
     static listParamatersInUrl(parameters={}){
-        if(!Object.keys(parameters).length) return '';
+        if(!parameters || typeof parameters !== 'object' || !Object.keys(parameters).length) return '';
         let arr = [];
         for (let [key, value] of Object.entries(parameters)) {
             arr.push(`&${key}=${value}`);

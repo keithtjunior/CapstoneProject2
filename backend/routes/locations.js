@@ -61,13 +61,20 @@ router.get('/:id(\\d+)', async function (req, res, next) {
 **/
 router.get('/name', async function (req, res, next) {
   const q = req.query;
+  let query = {
+    name: q.name,
+    nelat: Number(q.nelat),
+    nelng: Number(q.nelng),
+    swlat: Number(q.swlat),
+    swlng: Number(q.swlng)
+  };
   try {
-    const validator = jsonschema.validate(data, locationSearchSchema);
+    const validator = jsonschema.validate(query, locationSearchSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    const results = await Location.get(data);
+    const results = await Location.get(query);
     return res.json({ results });
   } catch (err) {
     return next(err);

@@ -7,7 +7,7 @@ const Location = require('../models/location');
 jest.mock('axios');
 
 const { 
-    id,
+    faunaId,
     faunae,
     continentIds,
     mockFaunaResponse, 
@@ -38,7 +38,7 @@ afterEach(function() {
 describe('get', () => {
     test('works', async () => {
         axios.get.mockResolvedValueOnce(mockFaunaResponse);
-        const res = await Fauna.get(id);
+        const res = await Fauna.get(faunaId);
         expect(res).toBeInstanceOf(Object);
         expect(typeof res.id).toBe('number');
         expect(typeof res.name).toBe('string');
@@ -64,7 +64,7 @@ describe('getFauna', () => {
 
     test('works', async () => {
         axios.get.mockResolvedValueOnce(mockFaunaResponse);
-        const res = await Fauna.getFauna(id);
+        const res = await Fauna.getFauna(faunaId);
         expect(res).toBeInstanceOf(Fauna);
         expect(typeof res.id).toBe('number');
         expect(typeof res.name).toBe('string');
@@ -75,7 +75,7 @@ describe('getFauna', () => {
         const mockCreateFaunaPlaceArrays = jest.spyOn(Fauna, 'createFaunaPlaceArrays');
         const mockCreateFaunae = jest.spyOn(Fauna, 'createFaunae');
         axios.get.mockResolvedValueOnce(mockFaunaResponse);
-        await Fauna.getFauna(id);
+        await Fauna.getFauna(faunaId);
         expect(mockCreateFaunaPlaceArrays).toHaveBeenCalled();
         expect(mockCreateFaunae).toHaveBeenCalled();
         mockCreateFaunaPlaceArrays.mockRestore();
@@ -275,6 +275,9 @@ describe('listParamatersInUrl', () => {
     test('convert empty object into empty string', () => {
         const params = {};
         expect(Fauna.listParamatersInUrl(params)).toEqual('');
+    });
+    test('returns empty string if given invalid parameter', () => {
+        expect(Fauna.listParamatersInUrl(1)).toEqual('');
     });
 });
 

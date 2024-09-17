@@ -51,26 +51,32 @@ class Location {
     static async get({name, swlat, swlng, nelat, nelng}) {
         let url = this.buildUrl('places', 'nearby', {name, nelat, nelng, swlat, swlng});
         const res = await axios.get(url);
-        return this.createLocation(res.data.results.standard);
+        return res.data ? this.createLocation(res.data.results.standard) : [];
     }
 
     static async getById(id) {
         let url = this.buildUrl('places', id);
-        const res = await axios.get(url);
-        return this.createLocation(res.data.results)[0];
+        const res = await axios.get(url)
+        .catch(err => {
+            console.error(`ERROR: ${err}`);
+            return undefined;
+        });
+        return res && res.data ? this.createLocation(res.data.results)[0] : undefined;
     }
 
     static async getByTerm(term) {
+        if(!term || typeof term !== 'string') return [];
         let url = this.buildUrl('places', 'autocomplete', {q: term.split(/[ ,]+/)[0], per_page: '10'});
         const res = await axios.get(url);
-        return this.createLocation(res.data.results);
+        return res.data ? this.createLocation(res.data.results) : [];
     }
 
     static async getLocations(name) {
+        if(!name || typeof name !== 'string') return;
         let data;
         let url = this.buildUrl('places', 'autocomplete', {q: name, per_page: '1'});
-        let res = await axios.get(url)
-        if(res && res.data && res.data.results){
+        let res = await axios.get(url);
+        if(res && res.data && res.data.results && res.data.results.length){
             let lat = null;
             let lng = null;
             if(res.data.results[0].location){
@@ -92,6 +98,7 @@ class Location {
     }
 
     static createLocation(items){
+        if (!items || !Array.isArray(items)) return [];
         let data = [];
         for(let item of items){
             data.push(new Location(
@@ -108,13 +115,15 @@ class Location {
         return data;
     }
 
-    static buildUrl(subdirectory, path, parameters={}){
+    static buildUrl(subdirectory='', path='', parameters={}){
+        if(!subdirectory || typeof subdirectory !== 'string') return `${INAT_API_URL}`;
+        if(typeof path !== 'string' && typeof path !== 'number') return `${INAT_API_URL}`;
         return `${INAT_API_URL}/${subdirectory}${path ? `/${path}` : ''}` + 
-            `?verifiable=any&spam=false&order=desc${this.listParamatersInUrl(parameters)}`;
+        `?verifiable=any&spam=false&order=desc${this.listParamatersInUrl(parameters)}`;
     }
 
     static listParamatersInUrl(parameters){
-        if(!Object.keys(parameters).length) return '';
+        if(!parameters || typeof parameters !== 'object' || !Object.keys(parameters).length) return '';
         let arr = [];
         for (let [key, value] of Object.entries(parameters)) {
             arr.push(`&${key}=${value}`);
@@ -127,13 +136,14 @@ class Location {
     // Fauna and Location modules/classes
 
     static formatFaunaPhotos(data) {
-        if (!data[0].taxon_photos) return [];
+        if (!data || !Array.isArray(data) || !data[0].taxon_photos) return [];
         const photos = data.map(i => i.taxon_photos
             .map(t => {return {name: t.photo.attribution, url: t.photo.original_url}}));
         return photos[0];
     }
 
     static createTaxa(items){
+        if (!items || !Array.isArray(items)) return [];
         let data = [];
         for(let item of items){
             if(item.taxon) data.push(item.taxon)
@@ -142,6 +152,7 @@ class Location {
     }
 
     static createFaunae(items){
+        if (!items || !Array.isArray(items) || !items.length) return [];
         let data = [];
         for(let item of items){
             if(item.rank === 'species'){

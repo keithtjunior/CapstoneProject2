@@ -1,4 +1,5 @@
-const id = 41526;
+const faunaId = 41526;
+const placeId = 7308;
 
 const continentIds = [
 	7308, 14687, 18684, 
@@ -7,6 +8,28 @@ const continentIds = [
 	6827, 6899, 7083, 
 	6829, 9994
 ];
+
+const locationParams = {
+	id: 7308,
+	name: 'Queensland',
+	lat: -22.4132068728,
+	lng: 144.6040528539,
+	nelat: -20.917574,
+	nelng: 142.702789,
+	swlat: -20.917574,
+	swlng: 142.702789
+};
+
+const location = {
+	id: 7308, 
+	uuid: 'f7ff56cb-f0b2-4a46-ba87-18da02a37c0c',
+	name: 'Queensland', 
+	displayName: 'Queensland, AU', 
+	adminLevel: 10, 
+	ancestorPlaceIds: [], 
+	lat: -22.4132068728, 
+	lng: 144.6040528539
+}
 
 const faunae = [
     {
@@ -6544,12 +6567,98 @@ const mockAllObservationsResponse = {
 	}
 }
 
+const mockLocationResponse = {
+	data: {
+		results: [
+			{
+				'id': 7308,
+				'uuid': 'f7ff56cb-f0b2-4a46-ba87-18da02a37c0c',
+				'slug': 'queensland-au',
+				'name': 'Queensland',
+				'display_name': 'Queensland, AU',
+				'place_type': 8,
+				'admin_level': 10,
+				'bbox_area': 311.47630298368193,
+				'ancestorPlaceIds': [
+					97393,
+					6744,
+					7308
+				],
+				'location': '-22.4132068728,144.6040528539'
+			},
+			{
+				'id': 6744,
+				'uuid': 'cc29ae85-7efc-47c0-9271-4032a624ab45',
+				'slug': 'australia',
+				'name': 'Australia',
+				'display_name': 'Australia',
+				'place_type': 12,
+				'admin_level': 0,
+				'bbox_area': 2133.44673897,
+				'ancestor_place_ids': [
+					97393,
+					6744
+				],
+				'location': '-27.4879707448,152.9541922'
+			}
+		]
+	}
+}
+
+const mockLocationNameResponse = {
+	data: {
+		results: {
+			standard: [
+				{
+					'id': 7308,
+					'uuid': 'f7ff56cb-f0b2-4a46-ba87-18da02a37c0c',
+					'slug': 'queensland-au',
+					'name': 'Queensland',
+					'display_name': 'Queensland, AU',
+					'place_type': 8,
+					'admin_level': 10,
+					'bbox_area': 311.47630298368193,
+					'ancestorPlaceIds': [
+						97393,
+						6744,
+						7308
+					],
+					'location': '-22.4132068728,144.6040528539'
+				},
+				{
+					'id': 6744,
+					'uuid': 'cc29ae85-7efc-47c0-9271-4032a624ab45',
+					'slug': 'australia',
+					'name': 'Australia',
+					'display_name': 'Australia',
+					'place_type': 12,
+					'admin_level': 0,
+					'bbox_area': 2133.44673897,
+					'ancestor_place_ids': [
+						97393,
+						6744
+					],
+					'location': '-27.4879707448,152.9541922'
+				}
+			]
+		}
+	}
+}
+
 const mockNoFaunaResponse = {
 	'results': {
 		'total_results': 0,
 		'page': 1,
 		'per_page': 30,
 		'results': []
+	}
+}
+
+const mockNoLocationResponse = {
+	'data': {
+		'results': {
+			'standard': []
+		}
 	}
 }
 
@@ -6568,13 +6677,19 @@ const mockErrorUnprocessableEntityResponse = {
 }
 
 module.exports = { 
-	id,
+	faunaId,
+	placeId,
 	faunae,
+	location,
 	continentIds,
+	locationParams,
 	mockFaunaResponse, 
 	mockAllFaunaResponse,
 	mockAllObservationsResponse,
 	mockNoFaunaResponse,
 	mockErrorNotFoundResponse,
-	mockErrorUnprocessableEntityResponse
+	mockErrorUnprocessableEntityResponse,
+	mockLocationResponse,
+	mockLocationNameResponse,
+	mockNoLocationResponse
 };
